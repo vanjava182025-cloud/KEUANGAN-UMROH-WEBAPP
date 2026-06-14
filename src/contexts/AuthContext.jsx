@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Logout handler
+  // Logout handler - CORRECTED
   const logout = async () => {
     setLoading(true);
     try {
@@ -102,8 +102,7 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       localStorage.removeItem('elhakim_current_user');
       setLoading(false);
-      // Enforce security session lifecycle: clear memory cache and reload
-      window.location.href = '/login';
+      // The hard refresh is removed. React's state and routing will handle the redirect.
     }
   };
 
@@ -114,11 +113,6 @@ export const AuthProvider = ({ children }) => {
   const isPimpinan = () => user?.role === 'Pimpinan';
 
   // Navigation or Route authorization
-  // Rules:
-  // Admin Keuangan: full access (all pages)
-  // Staff Keuangan: Dashboard, Pembayaran/Kwitansi, Pengeluaran, Kas Besar, Laporan, Laporan Harian, Pengaturan (except User Management)
-  // Marketing: Grup Keberangkatan, Data Jamaah
-  // Pimpinan: Dashboard, Laporan (Read-Only)
   const canAccessPath = (path) => {
     if (!user) return false;
     if (isAdmin()) return true; // Admin gets everything
@@ -126,22 +120,17 @@ export const AuthProvider = ({ children }) => {
     const cleanPath = path.toLowerCase();
     
     if (isStaff()) {
-      // Allowed paths for staff
       const allowed = ['/dashboard', '/pengeluaran', '/kas-besar', '/laporan', '/laporan-harian', '/pengaturan', '/payments', '/invoice', '/receipt', '/grup'];
-      // Staff cannot access user settings
       if (cleanPath.includes('/pengaturan/users')) return false;
-      // Staff can access detail/view of groups and jamaah, but not create/delete
       return allowed.some(p => cleanPath.startsWith(p));
     }
     
     if (isMarketing()) {
-      // Marketing can only manage departure groups and jamaah
       const allowed = ['/grup', '/jamaah'];
       return allowed.some(p => cleanPath.startsWith(p));
     }
     
     if (isPimpinan()) {
-      // Pimpinan gets dashboard, reports, logs (readonly)
       const allowed = ['/dashboard', '/laporan', '/laporan-harian', '/audit-log', '/grup/detail', '/grup/daftar'];
       return allowed.some(p => cleanPath.startsWith(p));
     }

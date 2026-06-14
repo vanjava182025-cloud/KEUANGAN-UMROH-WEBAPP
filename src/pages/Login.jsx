@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { KeyRound, Mail, Lock } from 'lucide-react';
 
 export default function Login() {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('wowon48@gmail.com');
   const [password, setPassword] = useState('12345678');
   const [errorMsg, setErrorMsg] = useState('');
@@ -20,7 +22,9 @@ export default function Login() {
     if (!result.success) {
       setErrorMsg(result.error);
     } else {
-      window.location.href = '/dashboard';
+      // CORRECT: Use navigate for SPA-friendly redirection.
+      // Redirect to root, and let the router's logic handle the rest.
+      navigate('/');
     }
   };
 
