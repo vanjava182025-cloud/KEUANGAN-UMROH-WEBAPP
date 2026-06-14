@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { KeyRound, Mail, Lock, ShieldCheck, HelpCircle } from 'lucide-react';
+import { KeyRound, Mail, Lock } from 'lucide-react';
 
 export default function Login() {
-  const { login, user } = useAuth();
-  const [email, setEmail] = useState('admin@elhakim.com');
-  const [password, setPassword] = useState('');
+  const { login } = useAuth();
+  const [email, setEmail] = useState('wowon48@gmail.com');
+  const [password, setPassword] = useState('12345678');
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -17,19 +17,6 @@ export default function Login() {
     const result = await login(email, password);
     setLoading(false);
     
-    if (!result.success) {
-      setErrorMsg(result.error);
-    } else {
-      window.location.href = '/dashboard';
-    }
-  };
-
-  const handleQuickLogin = async (roleEmail) => {
-    setErrorMsg('');
-    setLoading(true);
-    // Default password for demo quick login (leave empty for no password requirement)
-    const result = await login(roleEmail, '');
-    setLoading(false);
     if (!result.success) {
       setErrorMsg(result.error);
     } else {
@@ -109,48 +96,6 @@ export default function Login() {
               <KeyRound size={16} />
             </button>
           </form>
-
-          {/* Quick Demo Login Section */}
-          <div className="mt-8 pt-6 border-t border-slate-100">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4 justify-center">
-              <ShieldCheck size={14} className="text-emerald-500" />
-              <span>Login Demo Cepat (RBAC Tester)</span>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <button
-                onClick={() => handleQuickLogin('admin@elhakim.com')}
-                className="p-2 border border-slate-200 hover:border-primary hover:bg-red-50/50 rounded-xl text-left transition-all"
-              >
-                <p className="font-semibold text-slate-800">Admin Keuangan</p>
-                <p className="text-[10px] text-slate-500">Akses Penuh</p>
-              </button>
-              
-              <button
-                onClick={() => handleQuickLogin('staff@elhakim.com')}
-                className="p-2 border border-slate-200 hover:border-primary hover:bg-red-50/50 rounded-xl text-left transition-all"
-              >
-                <p className="font-semibold text-slate-800">Staff Keuangan</p>
-                <p className="text-[10px] text-slate-500">Operasional & Kas</p>
-              </button>
-              
-              <button
-                onClick={() => handleQuickLogin('marketing@elhakim.com')}
-                className="p-2 border border-slate-200 hover:border-primary hover:bg-red-50/50 rounded-xl text-left transition-all"
-              >
-                <p className="font-semibold text-slate-800">Marketing</p>
-                <p className="text-[10px] text-slate-500">Jamaah & Grup</p>
-              </button>
-              
-              <button
-                onClick={() => handleQuickLogin('pimpinan@elhakim.com')}
-                className="p-2 border border-slate-200 hover:border-primary hover:bg-red-50/50 rounded-xl text-left transition-all"
-              >
-                <p className="font-semibold text-slate-800">Pimpinan</p>
-                <p className="text-[10px] text-slate-500">Laporan & Read-Only</p>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
