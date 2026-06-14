@@ -1,6 +1,5 @@
-
-import { Navigate } from \'react-router-dom\';
-import { useAuth } from \'../contexts/AuthContext\';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 // This component acts as a gate at the root level.
 // It checks for authentication and redirects the user to the appropriate page.
@@ -19,15 +18,15 @@ const RootRedirect = () => {
   // If a user is logged in, decide their home page based on role.
   if (user) {
     // Marketing users have a different default dashboard.
-    if (user.role === \'Marketing\') {
-      return <Navigate to="/grup" replace />;\
+    if (user.role === 'Marketing') {
+      return <Navigate to="/grup" replace />;
     }
     // All other logged-in users go to the main dashboard.
-    return <Navigate to="/dashboard" replace />;\
+    return <Navigate to="/dashboard" replace />;
   }
 
   // If no user is logged in, they must go to the login page.
-  return <Navigate to="/login" replace />;\
+  return <Navigate to="/login" replace />;
 };
 
 export default RootRedirect;
