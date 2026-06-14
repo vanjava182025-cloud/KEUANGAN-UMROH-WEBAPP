@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import AppLayout from '../layouts/AppLayout';
+import RootRedirect from './RootRedirect'; // Import the new redirect component
 
 // Pages lazy loads (standard imports for reliability)
 import Login from '../pages/Login';
@@ -226,9 +227,9 @@ export default function AppRoutes() {
         }
       />
 
-      {/* Wildcard Fallbacks */}
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      {/* Wildcard Fallbacks - CORRECTED */}
+      <Route path="/" element={<RootRedirect />} />
+      <Route path="*" element={<RootRedirect />} />
     </Routes>
   );
 }
