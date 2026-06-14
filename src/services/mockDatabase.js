@@ -24,291 +24,14 @@ const DEFAULT_USERS = [
   { id: 'usr-4', name: 'H. Elhakim (Owner)', email: 'pimpinan@elhakim.com', role: 'Pimpinan', created_at: '2026-01-01T07:00:00Z' },
 ];
 
-const DEFAULT_GROUPS = [
-  {
-    id: 'grp-1',
-    group_code: 'UMR-202608-REG',
-    group_name: 'Umroh Reguler Syawal 1447 H',
-    package_name: 'Paket Silver 9 Hari',
-    departure_date: '2026-08-05',
-    return_date: '2026-08-14',
-    due_date: '2026-07-05',
-    airline: 'Saudi Arabian Airlines',
-    hotel_makkah: 'Retaj Al Hayat',
-    hotel_madinah: 'Al-Madinah Concorde',
-    target_pax: 45,
-    description: 'Pemberangkatan kloter pertama bulan Agustus 2026 dengan rute Jakarta - Madinah.',
-    status: 'Persiapan',
-    created_at: '2026-03-01T10:00:00Z'
-  },
-  {
-    id: 'grp-2',
-    group_code: 'HAJ-2026-VVIP',
-    group_name: 'Haji Furoda VVIP 2026',
-    package_name: 'Paket Haji Furoda Gold',
-    departure_date: '2026-06-15',
-    return_date: '2026-07-10',
-    due_date: '2026-06-01',
-    airline: 'Garuda Indonesia',
-    hotel_makkah: 'Pullman Zamzam Makkah',
-    hotel_madinah: 'The Oberoi Madinah',
-    target_pax: 15,
-    description: 'Program haji langsung berangkat tanpa antri dengan fasilitas bintang 5.',
-    status: 'Berangkat',
-    created_at: '2026-01-10T12:00:00Z'
-  },
-  {
-    id: 'grp-3',
-    group_code: 'UMR-202604-VIP',
-    group_name: 'Umroh Premium Ramadhan 1447 H',
-    package_name: 'Paket Gold 12 Hari',
-    departure_date: '2026-04-10',
-    return_date: '2026-04-22',
-    due_date: '2026-03-15',
-    airline: 'Qatar Airways',
-    hotel_makkah: 'Hilton Suites Makkah',
-    hotel_madinah: 'Dallah Taibah',
-    target_pax: 30,
-    description: 'Perjalanan ibadah Umroh I`tikaf 10 hari terakhir Ramadhan.',
-    status: 'Selesai',
-    created_at: '2025-11-01T08:00:00Z'
-  }
-];
-
-const DEFAULT_JAMAAH = [
-  {
-    id: 'jam-1',
-    group_id: 'grp-1',
-    person_in_charge: 'Ahmad Fauzi',
-    phone: '081234567890',
-    address: 'Jl. Pemuda No. 12, Rawamangun, Jakarta Timur',
-    total_invoice: 89000000,
-    total_paid: 55000000,
-    remaining_bill: 34000000,
-    payment_status: 'DP 2',
-    created_at: '2026-03-10T14:30:00Z'
-  },
-  {
-    id: 'jam-2',
-    group_id: 'grp-1',
-    person_in_charge: 'Hj. Siti Aminah',
-    phone: '081987654321',
-    address: 'Perumahan Griya Indah Blok C3, Bekasi',
-    total_invoice: 32000000,
-    total_paid: 32000000,
-    remaining_bill: 0,
-    payment_status: 'Lunas',
-    created_at: '2026-03-12T09:15:00Z'
-  },
-  {
-    id: 'jam-3',
-    group_id: 'grp-2',
-    person_in_charge: 'Bambang Subianto',
-    phone: '081122334455',
-    address: 'Kebayoran Baru, Jakarta Selatan',
-    total_invoice: 450000000,
-    total_paid: 150000000,
-    remaining_bill: 300000000,
-    payment_status: 'DP 1',
-    created_at: '2026-01-20T11:45:00Z'
-  },
-  {
-    id: 'jam-4',
-    group_id: 'grp-1',
-    person_in_charge: 'Muhibuddin',
-    phone: '085299887766',
-    address: 'Jl. Merdeka No. 45, Bogor',
-    total_invoice: 31500000,
-    total_paid: 0,
-    remaining_bill: 31500000,
-    payment_status: 'Belum Bayar',
-    created_at: '2026-03-15T15:20:00Z'
-  }
-];
-
-const DEFAULT_JAMAAH_MEMBERS = [
-  { id: 'mb-1', jamaah_id: 'jam-1', full_name: 'Ahmad Fauzi' },
-  { id: 'mb-2', jamaah_id: 'jam-1', full_name: 'Rina Herawati' },
-  { id: 'mb-3', jamaah_id: 'jam-1', full_name: 'Fahri Ramadhan' },
-  { id: 'mb-4', jamaah_id: 'jam-2', full_name: 'Hj. Siti Aminah' },
-  { id: 'mb-5', jamaah_id: 'jam-3', full_name: 'Bambang Subianto' },
-  { id: 'mb-6', jamaah_id: 'jam-3', full_name: 'Hartati' },
-  { id: 'mb-7', jamaah_id: 'jam-4', full_name: 'Muhibuddin' }
-];
-
-const DEFAULT_INVOICES = [
-  {
-    id: 'inv-1',
-    invoice_number: 'INV-202603-0001',
-    jamaah_id: 'jam-1',
-    group_id: 'grp-1',
-    invoice_date: '2026-03-10',
-    due_date: '2026-07-05',
-    total_amount: 89000000,
-    total_paid: 55000000,
-    remaining_amount: 34000000,
-    status: 'Sebagian', // 'Lunas', 'Sebagian', 'Belum Bayar'
-    created_at: '2026-03-10T14:30:00Z'
-  },
-  {
-    id: 'inv-2',
-    invoice_number: 'INV-202603-0002',
-    jamaah_id: 'jam-2',
-    group_id: 'grp-1',
-    invoice_date: '2026-03-12',
-    due_date: '2026-07-05',
-    total_amount: 32000000,
-    total_paid: 32000000,
-    remaining_amount: 0,
-    status: 'Lunas',
-    created_at: '2026-03-12T09:15:00Z'
-  },
-  {
-    id: 'inv-3',
-    invoice_number: 'INV-202601-0001',
-    jamaah_id: 'jam-3',
-    group_id: 'grp-2',
-    invoice_date: '2026-01-20',
-    due_date: '2026-05-15',
-    total_amount: 450000000,
-    total_paid: 150000000,
-    remaining_amount: 300000000,
-    status: 'Sebagian',
-    created_at: '2026-01-20T11:45:00Z'
-  },
-  {
-    id: 'inv-4',
-    invoice_number: 'INV-202603-0003',
-    jamaah_id: 'jam-4',
-    group_id: 'grp-1',
-    invoice_date: '2026-03-15',
-    due_date: '2026-07-05',
-    total_amount: 31500000,
-    total_paid: 0,
-    remaining_amount: 31500000,
-    status: 'Belum Bayar',
-    created_at: '2026-03-15T15:20:00Z'
-  }
-];
-
-const DEFAULT_INVOICE_ITEMS = [
-  // INV-1 (Ahmad Fauzi - 3 pax Silver Package)
-  { id: 'item-1', invoice_id: 'inv-1', description: 'Paket Umroh Silver (3 Pax)', qty: 3, price: 29000000, subtotal: 87000000 },
-  { id: 'item-2', invoice_id: 'inv-1', description: 'Handling & Perlengkapan', qty: 3, price: 500000, subtotal: 1500000 },
-  { id: 'item-3', invoice_id: 'inv-1', description: 'Admin + Materai', qty: 1, price: 500000, subtotal: 500000 },
-  // INV-2 (Hj. Siti Aminah - 1 pax Silver Package + Upgrade Room)
-  { id: 'item-4', invoice_id: 'inv-2', description: 'Paket Umroh Silver (1 Pax)', qty: 1, price: 29000000, subtotal: 29000000 },
-  { id: 'item-5', invoice_id: 'inv-2', description: 'Upgrade Room (Double)', qty: 1, price: 2500000, subtotal: 2500000 },
-  { id: 'item-6', invoice_id: 'inv-2', description: 'Handling & Perlengkapan', qty: 1, price: 500000, subtotal: 500000 },
-  // INV-3 (Bambang Subianto - 2 pax Haji Furoda VVIP)
-  { id: 'item-7', invoice_id: 'inv-3', description: 'Paket Haji Furoda VVIP (2 Pax)', qty: 2, price: 220000000, subtotal: 440000000 },
-  { id: 'item-8', invoice_id: 'inv-3', description: 'Handling & Seragam Premium', qty: 2, price: 5000000, subtotal: 10000000 },
-  // INV-4 (Muhibuddin - 1 pax Silver Package)
-  { id: 'item-9', invoice_id: 'inv-4', description: 'Paket Umroh Silver (1 Pax)', qty: 1, price: 29000000, subtotal: 29000000 },
-  { id: 'item-10', invoice_id: 'inv-4', description: 'Paspor & Visa', qty: 1, price: 2000000, subtotal: 2000000 },
-  { id: 'item-11', invoice_id: 'inv-4', description: 'Handling & Perlengkapan', qty: 1, price: 500000, subtotal: 500000 },
-];
-
-const DEFAULT_PAYMENTS = [
-  // Payments for INV-1
-  {
-    id: 'pay-1',
-    payment_number: 'PAY-INV-202603-0001',
-    invoice_id: 'inv-1',
-    payment_date: '2026-03-10',
-    sender_name: 'Ahmad Fauzi',
-    payment_method: 'Transfer BSI',
-    amount: 25000000,
-    description: 'DP Awal Pendaftaran Umroh 3 Pax',
-    proof_file: null,
-    created_by: 'usr-2',
-    created_at: '2026-03-10T14:40:00Z'
-  },
-  {
-    id: 'pay-2',
-    payment_number: 'PAY-INV-202604-0001',
-    invoice_id: 'inv-1',
-    payment_date: '2026-04-15',
-    sender_name: 'Ahmad Fauzi',
-    payment_method: 'Transfer BSI',
-    amount: 30000000,
-    description: 'Pembayaran DP 2',
-    proof_file: null,
-    created_by: 'usr-2',
-    created_at: '2026-04-15T10:00:00Z'
-  },
-  // Payments for INV-2 (Lunas)
-  {
-    id: 'pay-3',
-    payment_number: 'PAY-INV-202603-0002',
-    invoice_id: 'inv-2',
-    payment_date: '2026-03-12',
-    sender_name: 'Hj. Siti Aminah',
-    payment_method: 'Transfer Mandiri',
-    amount: 32000000,
-    description: 'Pelunasan Paket Umroh Syawal',
-    proof_file: null,
-    created_by: 'usr-2',
-    created_at: '2026-03-12T09:30:00Z'
-  },
-  // Payments for INV-3
-  {
-    id: 'pay-4',
-    payment_number: 'PAY-INV-202601-0001',
-    invoice_id: 'inv-3',
-    payment_date: '2026-01-20',
-    sender_name: 'Bambang Subianto',
-    payment_method: 'Transfer BCA',
-    amount: 150000000,
-    description: 'DP 1 Haji Furoda 2 Pax',
-    proof_file: null,
-    created_by: 'usr-1',
-    created_at: '2026-01-20T12:00:00Z'
-  }
-];
-
-const DEFAULT_EXPENSES = [
-  {
-    id: 'exp-1',
-    expense_date: '2026-03-05',
-    category: 'Hotel',
-    description: 'Booking Kamar Retaj Al Hayat Makkah (Kloter Syawal)',
-    amount: 45000000,
-    attachment: null,
-    created_by: 'usr-2',
-    created_at: '2026-03-05T11:00:00Z'
-  },
-  {
-    id: 'exp-2',
-    expense_date: '2026-03-08',
-    category: 'Makan',
-    description: 'DP Katering Makkah Madinah (Grup Syawal)',
-    amount: 12000000,
-    attachment: null,
-    created_by: 'usr-2',
-    created_at: '2026-03-08T13:15:00Z'
-  },
-  {
-    id: 'exp-3',
-    expense_date: '2026-02-15',
-    category: 'Tiket',
-    description: 'Pembayaran Deposit Block Seat Tiket Garuda (Haji)',
-    amount: 100000000,
-    attachment: null,
-    created_by: 'usr-1',
-    created_at: '2026-02-15T09:00:00Z'
-  },
-  {
-    id: 'exp-4',
-    expense_date: '2026-04-01',
-    category: 'Operasional Kantor',
-    description: 'Bayar Listrik & Internet Kantor Bulan Maret',
-    amount: 2500000,
-    attachment: null,
-    created_by: 'usr-2',
-    created_at: '2026-04-01T16:00:00Z'
-  }
-];
+const DEFAULT_GROUPS = [];
+const DEFAULT_JAMAAH = [];
+const DEFAULT_JAMAAH_MEMBERS = [];
+const DEFAULT_INVOICES = [];
+const DEFAULT_INVOICE_ITEMS = [];
+const DEFAULT_PAYMENTS = [];
+const DEFAULT_EXPENSES = [];
+const DEFAULT_AUDIT_LOGS = [];
 
 const DEFAULT_COMPANY_SETTINGS = {
   company_name: 'Elhakim Umroh Haji Tulungagung',
@@ -333,12 +56,6 @@ const DEFAULT_TERMS_CONDITIONS = [
   { id: 'tc-2', content: 'Pelunasan biaya paket wajib diselesaikan maksimal 45 hari sebelum tanggal keberangkatan.' },
   { id: 'tc-3', content: 'Dokumen lengkap (Paspor asli, Foto, Buku Nikah/KK, Kartu Vaksin) diserahkan 30 hari sebelum keberangkatan.' },
   { id: 'tc-4', content: 'Pembatalan sepihak dikenakan denda administrasi sesuai dengan jangka waktu pembatalan.' }
-];
-
-const DEFAULT_AUDIT_LOGS = [
-  { id: 'log-1', user_id: 'usr-1', activity: 'Inisialisasi sistem keuangan Elhakim Travel', old_data: null, new_data: 'Sistem diaktifkan', created_at: '2026-01-01T07:00:00Z' },
-  { id: 'log-2', user_id: 'usr-3', activity: 'Membuat Grup Keberangkatan Haji Furoda VVIP 2026', old_data: null, new_data: 'HAJ-2026-VVIP', created_at: '2026-01-10T12:05:00Z' },
-  { id: 'log-3', user_id: 'usr-2', activity: 'Penerimaan pembayaran DP Ahmad Fauzi', old_data: null, new_data: 'Kwitansi KWT-INV-202603-0001 senilai Rp 25.000.000', created_at: '2026-03-10T14:42:00Z' },
 ];
 
 // Initialize Database in LocalStorage
@@ -439,12 +156,44 @@ export const mockDB = {
       }
     },
     delete: (id, actingUserId) => {
-      const groups = getTable(STORAGE_KEYS.GROUPS);
-      const grp = groups.find(g => g.id === id);
-      const filtered = groups.filter(g => g.id !== id);
-      saveTable(STORAGE_KEYS.GROUPS, filtered);
-      logActivity(actingUserId, `Hapus grup: ${grp?.group_name || id}`, grp, null);
-      return true;
+        const groups = getTable(STORAGE_KEYS.GROUPS);
+        const jamaah = getTable(STORAGE_KEYS.JAMAAH);
+        const jamaahMembers = getTable(STORAGE_KEYS.JAMAAH_MEMBERS);
+        const invoices = getTable(STORAGE_KEYS.INVOICES);
+        const invoiceItems = getTable(STORAGE_KEYS.INVOICE_ITEMS);
+        const payments = getTable(STORAGE_KEYS.PAYMENTS);
+
+        const groupToDelete = groups.find(g => g.id === id);
+        if (!groupToDelete) return false;
+
+        // Log group deletion
+        logActivity(actingUserId, `Hapus grup: ${groupToDelete.group_name}`, groupToDelete, null);
+
+        // Find all jamaah related to the group
+        const relatedJamaah = jamaah.filter(j => j.group_id === id);
+        const relatedJamaahIds = relatedJamaah.map(j => j.id);
+
+        // Find all invoices related to the group
+        const relatedInvoices = invoices.filter(i => i.group_id === id);
+        const relatedInvoiceIds = relatedInvoices.map(i => i.id);
+
+        // Filter out all related data
+        const remainingGroups = groups.filter(g => g.id !== id);
+        const remainingJamaah = jamaah.filter(j => j.group_id !== id);
+        const remainingMembers = jamaahMembers.filter(m => !relatedJamaahIds.includes(m.jamaah_id));
+        const remainingInvoices = invoices.filter(i => i.group_id !== id);
+        const remainingInvoiceItems = invoiceItems.filter(item => !relatedInvoiceIds.includes(item.invoice_id));
+        const remainingPayments = payments.filter(p => !relatedInvoiceIds.includes(p.invoice_id));
+
+        // Save the filtered tables back to localStorage
+        saveTable(STORAGE_KEYS.GROUPS, remainingGroups);
+        saveTable(STORAGE_KEYS.JAMAAH, remainingJamaah);
+        saveTable(STORAGE_KEYS.JAMAAH_MEMBERS, remainingMembers);
+        saveTable(STORAGE_KEYS.INVOICES, remainingInvoices);
+        saveTable(STORAGE_KEYS.INVOICE_ITEMS, remainingInvoiceItems);
+        saveTable(STORAGE_KEYS.PAYMENTS, remainingPayments);
+
+        return true;
     }
   },
 
@@ -894,21 +643,17 @@ export const mockDB = {
     getAll: () => getTable(STORAGE_KEYS.AUDIT_LOGS)
   },
 
-  // Reset database to default
-  resetDB: () => {
-    localStorage.removeItem(STORAGE_KEYS.USERS);
-    localStorage.removeItem(STORAGE_KEYS.GROUPS);
-    localStorage.removeItem(STORAGE_KEYS.JAMAAH);
-    localStorage.removeItem(STORAGE_KEYS.JAMAAH_MEMBERS);
-    localStorage.removeItem(STORAGE_KEYS.INVOICES);
-    localStorage.removeItem(STORAGE_KEYS.INVOICE_ITEMS);
-    localStorage.removeItem(STORAGE_KEYS.PAYMENTS);
-    localStorage.removeItem(STORAGE_KEYS.EXPENSES);
-    localStorage.removeItem(STORAGE_KEYS.COMPANY_SETTINGS);
-    localStorage.removeItem(STORAGE_KEYS.COMPANY_BANKS);
-    localStorage.removeItem(STORAGE_KEYS.TERMS_CONDITIONS);
-    localStorage.removeItem(STORAGE_KEYS.AUDIT_LOGS);
-    initDB();
+  // Reset database to a clean slate, preserving users and settings
+  resetDB: (actingUserId) => {
+    saveTable(STORAGE_KEYS.GROUPS, []);
+    saveTable(STORAGE_KEYS.JAMAAH, []);
+    saveTable(STORAGE_KEYS.JAMAAH_MEMBERS, []);
+    saveTable(STORAGE_KEYS.INVOICES, []);
+    saveTable(STORAGE_KEYS.INVOICE_ITEMS, []);
+    saveTable(STORAGE_KEYS.PAYMENTS, []);
+    saveTable(STORAGE_KEYS.EXPENSES, []);
+    saveTable(STORAGE_KEYS.AUDIT_LOGS, []);
+    logActivity(actingUserId, 'RESET DATABASE', 'all transactional data', 'empty');
     return true;
   }
 };
