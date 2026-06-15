@@ -42,7 +42,7 @@ const DEFAULT_COMPANY_SETTINGS = {
   company_facebook: 'El Hakim Umrah',
   company_whatsapp: '0851-4100-9634',
   company_tiktok: 'elhakimtour',
-  company_logo: '/logo lanscape copy.png'
+  company_logo: 'logo lanscape copy.png'
 };
 
 const DEFAULT_COMPANY_BANKS = [

@@ -143,12 +143,21 @@ export default function KwitansiPage() {
   
   const handleDelete = () => {
     if (window.confirm('Anda yakin ingin menghapus kwitansi ini? Bukti transfer yang terlampir (jika ada) juga akan dihapus. Tindakan ini tidak dapat diurungkan.')) {
-      const result = mockDB.payments.delete(id, user.id);
+      // Pastikan ID yang digunakan untuk menghapus adalah string
+      const paymentId = String(id);
+      const userId = user ? String(user.id) : null;
+
+      if (!userId) {
+          alert('Gagal menghapus: User tidak terautentikasi.');
+          return;
+      }
+
+      const result = mockDB.payments.delete(paymentId, userId);
       if (result) {
         alert('Kwitansi berhasil dihapus.');
         navigate('/cash-flow');
       } else {
-        alert('Gagal menghapus kwitansi.');
+        alert('Gagal menghapus kwitansi. Coba muat ulang halaman dan coba lagi.');
       }
     }
   };
