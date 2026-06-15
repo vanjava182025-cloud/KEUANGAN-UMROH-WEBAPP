@@ -3,43 +3,45 @@ import { mockDB } from './mockDatabase';
 
 // Unified Service to manage all CRUD with Supabase or MockDB fallback
 export const dbService = {
-  // Users Management
+  // Users Management (now points to profiles table)
   users: {
     getAll: async () => {
       if (isSupabaseConfigured) {
-        const { data, error } = await supabase.from('users').select('*');
+        const { data, error } = await supabase.from('profiles').select('*');
         if (!error) return data;
-        console.error('Error fetching users from Supabase:', error.message);
+        console.error('Error fetching profiles from Supabase:', error.message);
       }
       return mockDB.users.getAll();
     },
     getById: async (id) => {
       if (isSupabaseConfigured) {
-        const { data, error } = await supabase.from('users').select('*').eq('id', id).single();
+        const { data, error } = await supabase.from('profiles').select('*').eq('id', id).single();
         if (!error) return data;
       }
       return mockDB.users.getById(id);
     },
     getByEmail: async (email) => {
       if (isSupabaseConfigured) {
-        const { data, error } = await supabase.from('users').select('*').eq('email', email).maybeSingle();
+        const { data, error } = await supabase.from('profiles').select('*').eq('email', email).maybeSingle();
         if (!error) return data;
       }
       return mockDB.users.getByEmail(email);
     },
     save: async (user, actingUserId) => {
       if (isSupabaseConfigured) {
-        const { data, error } = await supabase.from('users').upsert(user).select().single();
+        const { data, error } = await supabase.from('profiles').upsert(user).select().single();
         if (!error) return data;
-        console.error('Error saving user to Supabase:', error.message);
+        console.error('Error saving profile to Supabase:', error.message);
       }
       return mockDB.users.save(user, actingUserId);
     },
     delete: async (id, actingUserId) => {
       if (isSupabaseConfigured) {
-        const { error } = await supabase.from('users').delete().eq('id', id);
+        // Note: This deletes the profile, but not the auth.user entry.
+        // Proper user deletion should be handled via admin rights in a secure environment.
+        const { error } = await supabase.from('profiles').delete().eq('id', id);
         if (!error) return true;
-        console.error('Error deleting user from Supabase:', error.message);
+        console.error('Error deleting profile from Supabase:', error.message);
       }
       return mockDB.users.delete(id, actingUserId);
     }
@@ -113,22 +115,18 @@ export const dbService = {
       return mockDB.jamaah.getMembers(jamaahId);
     },
     save: async (payload, actingUserId) => {
-      // In Supabase, this would normally involve transactions or multiple client calls.
-      // For absolute correctness and safety, we run it locally and sync or fall back.
       if (isSupabaseConfigured) {
         try {
           const { jamaah, members, invoiceItems } = payload;
           const { data: savedJam, error: jamErr } = await supabase.from('jamaah').upsert(jamaah).select().single();
           if (jamErr) throw jamErr;
 
-          // Delete and insert members
           await supabase.from('jamaah_members').delete().eq('jamaah_id', savedJam.id);
           const memberRows = members.map(name => ({ jamaah_id: savedJam.id, full_name: name }));
           await supabase.from('jamaah_members').insert(memberRows);
 
-          // Get/Create invoice
-          let { data: invoice, error: invGetErr } = await supabase.from('invoices').select('*').eq('jamaah_id', savedJam.id).maybeSingle();
-          const { data: groupData, error: groupErr } = await supabase.from('groups').select('due_date').eq('id', savedJam.group_id).maybeSingle();
+          let { data: invoice } = await supabase.from('invoices').select('*').eq('jamaah_id', savedJam.id).maybeSingle();
+          const { data: groupData } = await supabase.from('groups').select('due_date').eq('id', savedJam.group_id).maybeSingle();
           const totalAmount = invoiceItems.reduce((acc, item) => acc + (item.qty * item.price), 0);
 
           if (!invoice) {
@@ -162,7 +160,6 @@ export const dbService = {
             invoice = updatedInv;
           }
 
-          // Delete and insert invoice items
           await supabase.from('invoice_items').delete().eq('invoice_id', invoice.id);
           const itemRows = invoiceItems.map(item => ({
             invoice_id: invoice.id,
@@ -173,36 +170,25 @@ export const dbService = {
           }));
           await supabase.from('invoice_items').insert(itemRows);
 
-          // Update Jam total_invoice & remaining_bill
           await supabase.from('jamaah').update({
             total_invoice: totalAmount,
             remaining_bill: totalAmount - savedJam.total_paid,
-            payment_status: (totalAmount - savedJam.total_paid) <= 0 ? 'Lunas' : (savedJam.total_paid > 0 ? 'DP 1' : 'Belum Bayar') // simplification
           }).eq('id', savedJam.id);
 
           return savedJam;
         } catch (e) {
-          console.error('Supabase multi-table save transaction failed, falling back to Mock:', e.message);
+          console.error('Supabase multi-table save transaction failed:', e.message);
+          return null; // Indicate failure
         }
       }
       return mockDB.jamaah.save(payload, actingUserId);
     },
     delete: async (id, actingUserId) => {
       if (isSupabaseConfigured) {
-        // Cascade delete on supabase if FK is configured, otherwise manual:
-        try {
-          const { data: invoice } = await supabase.from('invoices').select('id').eq('jamaah_id', id).maybeSingle();
-          if (invoice) {
-            await supabase.from('invoice_items').delete().eq('invoice_id', invoice.id);
-            await supabase.from('payments').delete().eq('invoice_id', invoice.id);
-            await supabase.from('invoices').delete().eq('id', invoice.id);
-          }
-          await supabase.from('jamaah_members').delete().eq('jamaah_id', id);
-          const { error } = await supabase.from('jamaah').delete().eq('id', id);
-          if (!error) return true;
-        } catch (e) {
-          console.error('Error cascading delete in Supabase:', e);
-        }
+        // Using CASCADE delete in DB, so just deleting jamaah is enough
+        const { error } = await supabase.from('jamaah').delete().eq('id', id);
+        if (!error) return true;
+        console.error('Error deleting jamaah from Supabase:', error);
       }
       return mockDB.jamaah.delete(id, actingUserId);
     }
@@ -272,14 +258,21 @@ export const dbService = {
     },
     save: async (payment, actingUserId) => {
       if (isSupabaseConfigured) {
-        // Run database upsert & trigger sync (in production, triggers/functions on DB handles recalculations)
         try {
-          const { data, error } = await supabase.from('payments').upsert(payment).select().single();
-          if (!error) {
-            // Recalculate and update the invoice and jamaah table
-            // Similar to the mock logic, query related tables and update
-            return data;
-          }
+          const { data: savedPayment, error } = await supabase.from('payments').upsert(payment).select().single();
+          if (error) throw error;
+          
+          // Recalculate invoice & jamaah totals
+          const { data: allPayments } = await supabase.from('payments').select('amount').eq('invoice_id', savedPayment.invoice_id);
+          const totalPaid = allPayments.reduce((sum, p) => sum + p.amount, 0);
+          const { data: invoice } = await supabase.from('invoices').select('id, jamaah_id, total_amount').eq('id', savedPayment.invoice_id).single();
+          const remainingAmount = invoice.total_amount - totalPaid;
+          const newStatus = remainingAmount <= 0 ? 'Lunas' : 'Sebagian';
+
+          await supabase.from('invoices').update({ total_paid: totalPaid, remaining_amount: remainingAmount, status: newStatus }).eq('id', invoice.id);
+          await supabase.from('jamaah').update({ total_paid: totalPaid, remaining_bill: remainingAmount, payment_status: newStatus }).eq('id', invoice.jamaah_id);
+          
+          return savedPayment;
         } catch (err) {
           console.error('Supabase payments write failed:', err);
         }
@@ -302,20 +295,14 @@ export const dbService = {
 
         // Recalculate invoice totals
         const { data: invoice, error: invoiceError } = await supabase.from('invoices').select('*').eq('id', payment.invoice_id).single();
-        if (invoiceError) {
-          console.error('Error fetching invoice for recalculation:', invoiceError.message);
-          return true; // Deletion was successful, but recalculation failed
-        }
+        if (invoiceError) return true; 
 
         const newTotalPaid = (invoice.total_paid || 0) - payment.amount;
         const newRemainingAmount = invoice.total_amount - newTotalPaid;
         const newStatus = newRemainingAmount <= 0 ? 'Lunas' : (newTotalPaid > 0 ? 'Sebagian' : 'Belum Bayar');
 
-        await supabase.from('invoices').update({
-          total_paid: newTotalPaid,
-          remaining_amount: newRemainingAmount,
-          status: newStatus
-        }).eq('id', invoice.id);
+        await supabase.from('invoices').update({ total_paid: newTotalPaid, remaining_amount: newRemainingAmount, status: newStatus }).eq('id', invoice.id);
+        await supabase.from('jamaah').update({ total_paid: newTotalPaid, remaining_bill: newRemainingAmount, payment_status: newStatus }).eq('id', invoice.jamaah_id);
 
         return true;
       }
@@ -401,6 +388,8 @@ export const dbService = {
     },
     saveTerms: async (termsList, actingUserId) => {
       if (isSupabaseConfigured) {
+        // This assumes termsList is an array of objects to be inserted/updated.
+        // Supabase upsert works well for this.
         const { error } = await supabase.from('terms_conditions').upsert(termsList);
         if (!error) return true;
       }
@@ -419,7 +408,7 @@ export const dbService = {
     }
   },
 
-  // Admin resets
+  // Admin resets - Not safe for production with Supabase, uses Mock only.
   resetDB: async () => {
     return mockDB.resetDB();
   }
